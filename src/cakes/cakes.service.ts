@@ -1,8 +1,8 @@
+import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { Repository } from 'typeorm';
 import { CreateCakeInput, UpdateCakeInput } from './dto/inputs';
 import { Cake } from './entities/cake.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 @Injectable()
 export class CakesService {

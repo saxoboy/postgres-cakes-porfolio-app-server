@@ -9,15 +9,52 @@ type Cake {
   imageUrl: String
 }
 
+type User {
+  id: ID!
+  _createdAt: DateTime!
+  _updatedAt: DateTime!
+  _createdById: ID
+  _updatedById: ID
+  name: String!
+  lastname: String!
+  email: String!
+  roles: [String!]!
+  isActive: Boolean!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type AuthResponse {
+  token: String!
+  user: User!
+}
+
 type Query {
   CakesFindAll: [Cake!]!
-  CakeOne(id: ID!): Cake!
+  CakeFindOne(id: ID!): Cake!
+  UsersFindAll(roles: [ValidRoles!] = []): [User!]!
+  UserFindOne(id: ID!): User!
+  AuthRevalite: AuthResponse!
+}
+
+"""Valid Roles"""
+enum ValidRoles {
+  root
+  admin
+  user
 }
 
 type Mutation {
   CakeCreate(createCakeInput: CreateCakeInput!): Cake!
   CakeUpdate(updateCakeInput: UpdateCakeInput!): Cake!
   CakeRemove(id: ID!): Cake!
+  UserUpdate(updateUserInput: UpdateUserInput!): User!
+  UserRemove(id: ID!): User!
+  AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
+  AuthLogin(loginInput: LoginInput!): AuthResponse!
 }
 
 input CreateCakeInput {
@@ -31,4 +68,26 @@ input UpdateCakeInput {
   description: String
   imageUrl: String
   id: ID!
+}
+
+input UpdateUserInput {
+  name: String
+  lastname: String
+  email: String
+  password: String
+  id: ID!
+  roles: [ValidRoles!]
+  isActive: Boolean
+}
+
+input AuthRegisterInput {
+  name: String!
+  lastname: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }

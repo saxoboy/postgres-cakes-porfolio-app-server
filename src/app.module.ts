@@ -8,6 +8,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CakesModule } from './cakes/cakes.module';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { CakesModule } from './cakes/cakes.module';
       autoLoadEntities: true,
     }),
     CakesModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
