@@ -20,7 +20,7 @@ export class CakesResolver {
     return await this.cakesService.findAll();
   }
 
-  @Query(() => Cake, { name: 'CakeOne' })
+  @Query(() => Cake, { name: 'CakeFindOne' })
   async findOne(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
   ): Promise<Cake> {
