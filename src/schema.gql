@@ -2,13 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Cake {
-  id: ID!
-  name: String!
-  description: String!
-  imageUrl: String
-}
-
 type User {
   id: ID!
   _createdAt: DateTime!
@@ -20,12 +13,27 @@ type User {
   email: String!
   roles: [String!]!
   isActive: Boolean!
+  cakes: [Cake!]!
+  cakeCount: Int!
 }
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
+
+type Cake {
+  id: ID!
+  _createdAt: DateTime!
+  _updatedAt: DateTime!
+  _createdById: ID
+  _updatedById: ID
+  name: String!
+  description: String!
+  imageUrl: String
+  isActive: Boolean!
+  user: User!
+}
 
 type AuthResponse {
   token: String!
