@@ -7,5 +7,6 @@ import { Cake } from './entities/cake.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Cake])],
   providers: [CakesResolver, CakesService],
+  exports: [CakesService, TypeOrmModule],
 })
 export class CakesModule {}

@@ -1,7 +1,8 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { IsEmail, MinLength } from 'class-validator';
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { Base } from 'src/base/base.entity';
+import { Cake } from 'src/cakes/entities/cake.entity';
 
 @Entity({ name: 'users' })
 @ObjectType()
@@ -30,4 +31,8 @@ export class User extends Base {
   @Column({ type: 'boolean', default: true })
   @Field(() => Boolean)
   isActive: boolean;
+
+  @OneToMany(() => Cake, (cake) => cake.user, { nullable: true, lazy: true })
+  @Field(() => [Cake])
+  cakes?: Cake[];
 }

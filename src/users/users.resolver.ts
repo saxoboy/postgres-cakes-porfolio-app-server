@@ -1,5 +1,15 @@
-import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ID,
+  ResolveField,
+  Int,
+  Parent,
+} from '@nestjs/graphql';
 import { UseGuards, ParseUUIDPipe } from '@nestjs/common';
+import { CakesService } from '../cakes/cakes.service';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { ValidRolesArgs } from './dto/args/roles.arg';
@@ -11,7 +21,10 @@ import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
 @Resolver(() => User)
 @UseGuards(JwtAuthGuard)
 export class UsersResolver {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly cakesService: CakesService,
+  ) {}
 
   @Query(() => [User], { name: 'UsersFindAll' })
   findAll(
@@ -47,5 +60,13 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.root, ValidRoles.admin]) user: User,
   ) {
     return this.usersService.remove(id, user);
+  }
+
+  @ResolveField(() => Int, { name: 'cakeCount' })
+  async cakeCount(
+    @Parent() user: User,
+    @CurrentUser([ValidRoles.root, ValidRoles.admin]) admin: User,
+  ): Promise<number> {
+    return await this.cakesService.countByUser(user);
   }
 }
