@@ -13,7 +13,17 @@ export class CakesService {
   ) {}
 
   async create(createCakeInput: CreateCakeInput, user: User): Promise<Cake> {
-    const newCake = this.cakeRepository.create({ ...createCakeInput, user });
+    const { name } = createCakeInput;
+    const slug = name.toLowerCase().replace(/ /g, '-');
+    const cake = await this.cakeRepository.findOneBy({ slug });
+    if (cake) {
+      throw new NotFoundException('Cake already exists');
+    }
+    const newCake = this.cakeRepository.create({
+      ...createCakeInput,
+      slug,
+      user,
+    });
     return await this.cakeRepository.save(newCake);
   }
 

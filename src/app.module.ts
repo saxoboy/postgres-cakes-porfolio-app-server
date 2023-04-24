@@ -10,6 +10,7 @@ import { AppService } from './app.service';
 import { CakesModule } from './cakes/cakes.module';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AuthModule } from './auth/auth.module';
     CakesModule,
     UsersModule,
     AuthModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

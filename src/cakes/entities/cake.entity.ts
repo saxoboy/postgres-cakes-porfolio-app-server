@@ -12,11 +12,19 @@ export class Cake extends Base {
 
   @Field(() => String)
   @Column()
+  slug: string;
+
+  @Field(() => String)
+  @Column()
   description: string;
 
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   imageUrl?: string;
+
+  @Field(() => [String], { nullable: true })
+  @Column({ type: 'text', array: true, nullable: true })
+  photos?: string[];
 
   @Column({ type: 'boolean', default: true })
   @Field(() => Boolean)

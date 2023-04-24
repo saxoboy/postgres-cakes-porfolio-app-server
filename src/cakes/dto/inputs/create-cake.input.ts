@@ -9,10 +9,18 @@ export class CreateCakeInput {
 
   @Field(() => String)
   @IsString()
+  slug: string;
+
+  @Field(() => String)
+  @IsString()
   description: string;
 
   @Field(() => String, { nullable: true })
   @IsUrl()
   @IsOptional()
   imageUrl?: string;
+
+  @Field(() => [String], { nullable: true })
+  @IsOptional()
+  photos?: string[];
 }

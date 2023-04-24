@@ -29,8 +29,10 @@ type Cake {
   _createdById: ID
   _updatedById: ID
   name: String!
+  slug: String!
   description: String!
   imageUrl: String
+  photos: [String!]
   isActive: Boolean!
   user: User!
 }
@@ -63,18 +65,25 @@ type Mutation {
   UserRemove(id: ID!): User!
   AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
   AuthLogin(loginInput: LoginInput!): AuthResponse!
+
+  """Seed the database"""
+  Zseed: Boolean!
 }
 
 input CreateCakeInput {
   name: String!
+  slug: String!
   description: String!
   imageUrl: String
+  photos: [String!]
 }
 
 input UpdateCakeInput {
   name: String
+  slug: String
   description: String
   imageUrl: String
+  photos: [String!]
   id: ID!
 }
 
