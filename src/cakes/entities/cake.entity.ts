@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index, ManyToOne } from 'typeorm';
 import { Base } from 'src/base/base.entity';
 import { User } from 'src/users/entities/user.entity';
+import { IsOptional } from 'class-validator';
 
 @Entity({ name: 'cakes' })
 @ObjectType()
@@ -10,9 +11,10 @@ export class Cake extends Base {
   @Column()
   name: string;
 
-  @Field(() => String)
-  @Column()
-  slug: string;
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true })
+  @IsOptional()
+  slug?: string;
 
   @Field(() => String)
   @Column()

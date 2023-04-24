@@ -7,9 +7,10 @@ export class CreateCakeInput {
   @IsString()
   name: string;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @IsString()
-  slug: string;
+  @IsOptional()
+  slug?: string;
 
   @Field(() => String)
   @IsString()

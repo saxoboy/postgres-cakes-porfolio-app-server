@@ -40,8 +40,8 @@ export class SeedService {
     if (this.isProduction) {
       throw new UnauthorizedException('Cannot drop production database');
     }
-    await this.userRepository.createQueryBuilder().delete().where({}).execute();
     await this.cakeRepository.createQueryBuilder().delete().where({}).execute();
+    await this.userRepository.createQueryBuilder().delete().where({}).execute();
   }
 
   async seedUsers(): Promise<User> {
