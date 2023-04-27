@@ -12,7 +12,9 @@ import { UseGuards, ParseUUIDPipe } from '@nestjs/common';
 import { CakesService } from '../cakes/cakes.service';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
+import { Cake } from 'src/cakes/entities/cake.entity';
 import { ValidRolesArgs } from './dto/args/roles.arg';
+import { PaginationArgs, SearchArgs } from 'src/common/dto/args';
 import { UpdateUserInput } from './dto/update-user.input';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.auth.guards';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
@@ -68,5 +70,15 @@ export class UsersResolver {
     @CurrentUser([ValidRoles.root, ValidRoles.admin]) admin: User,
   ): Promise<number> {
     return await this.cakesService.countByUser(user);
+  }
+
+  @ResolveField(() => [Cake], { name: 'cakes' })
+  async getCakesByUser(
+    @CurrentUser([ValidRoles.root, ValidRoles.admin]) admin: User,
+    @Parent() user: User,
+    @Args() paginationArgs: PaginationArgs,
+    @Args() searchArgs: SearchArgs,
+  ): Promise<Cake[]> {
+    return this.cakesService.findAll(user, paginationArgs, searchArgs);
   }
 }
