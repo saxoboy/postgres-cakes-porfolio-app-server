@@ -60,6 +60,7 @@ enum ValidRoles {
 type Mutation {
   CakeCreate(createCakeInput: CreateCakeInput!): Cake!
   CakeUpdate(updateCakeInput: UpdateCakeInput!): Cake!
+  CakeDeactivate(id: ID!): Cake!
   CakeRemove(id: ID!): Cake!
   UserUpdate(updateUserInput: UpdateUserInput!): User!
   UserRemove(id: ID!): User!
@@ -67,7 +68,7 @@ type Mutation {
   AuthLogin(loginInput: LoginInput!): AuthResponse!
 
   """Seed the database"""
-  Zseed: Boolean!
+  Seed: Boolean!
 }
 
 input CreateCakeInput {

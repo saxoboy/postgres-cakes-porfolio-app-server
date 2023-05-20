@@ -6,6 +6,13 @@ export const SEED_USERS = [
     password: '123456789root',
     role: ['root'],
   },
+  // {
+  //   name: 'Eliza',
+  //   lastname: 'Loyola',
+  //   email: 'eliza@correo.com',
+  //   password: '123456789root',
+  //   role: ['admin'],
+  // },
 ];
 
 export const SEED_CAKES = [

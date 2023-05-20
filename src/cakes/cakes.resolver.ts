@@ -50,6 +50,14 @@ export class CakesResolver {
     );
   }
 
+  @Mutation(() => Cake, { name: 'CakeDeactivate' })
+  async deactivateCake(
+    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
+    @CurrentUser() user: User,
+  ): Promise<Cake> {
+    return await this.cakesService.deactivate(id, user);
+  }
+
   @Mutation(() => Cake, { name: 'CakeRemove' })
   async removeCake(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,

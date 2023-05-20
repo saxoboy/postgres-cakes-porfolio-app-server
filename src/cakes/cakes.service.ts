@@ -24,6 +24,8 @@ export class CakesService {
       ...createCakeInput,
       slug,
       user,
+      _createdById: user.id,
+      _updatedById: user.id,
     });
     return await this.cakeRepository.save(newCake);
   }
@@ -78,6 +80,15 @@ export class CakesService {
     if (!cake) {
       throw new NotFoundException('Cake not found');
     }
+    cake._updatedById = user.id;
+    return await this.cakeRepository.save(cake);
+  }
+
+  async deactivate(id: string, user: User): Promise<Cake> {
+    const cake = await this.findOne(id, user);
+    cake.isActive = false;
+    cake._updatedById = user.id;
+    cake._updatedAt = new Date();
     return await this.cakeRepository.save(cake);
   }
 
