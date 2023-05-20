@@ -38,8 +38,8 @@ type Cake {
 }
 
 type AuthResponse {
-  token: String!
-  user: User!
+  token: String
+  user: User
 }
 
 type Query {
@@ -66,6 +66,7 @@ type Mutation {
   UserRemove(id: ID!): User!
   AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
   AuthLogin(loginInput: LoginInput!): AuthResponse!
+  AuthLogout(id: ID!): AuthResponse!
 
   """Seed the database"""
   Seed: Boolean!
