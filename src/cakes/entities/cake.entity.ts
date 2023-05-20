@@ -14,7 +14,7 @@ export class Cake extends Base {
   @Field(() => String, { nullable: true })
   @Column({ nullable: true })
   @IsOptional()
-  slug?: string;
+  slug: string;
 
   @Field(() => String)
   @Column()

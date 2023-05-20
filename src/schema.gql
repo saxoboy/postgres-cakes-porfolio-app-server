@@ -13,7 +13,7 @@ type User {
   email: String!
   roles: [String!]!
   isActive: Boolean!
-  cakes: [Cake!]!
+  cakes(offset: Int = 0, limit: Int = 10, search: String): [Cake!]!
   cakeCount: Int!
 }
 
@@ -43,7 +43,7 @@ type AuthResponse {
 }
 
 type Query {
-  CakesFindAll: [Cake!]!
+  CakesFindAll(offset: Int = 0, limit: Int = 10, search: String): [Cake!]!
   CakeFindOne(id: ID!): Cake!
   UsersFindAll(roles: [ValidRoles!] = []): [User!]!
   UserFindOne(id: ID!): User!
@@ -60,6 +60,7 @@ enum ValidRoles {
 type Mutation {
   CakeCreate(createCakeInput: CreateCakeInput!): Cake!
   CakeUpdate(updateCakeInput: UpdateCakeInput!): Cake!
+  CakeDeactivate(id: ID!): Cake!
   CakeRemove(id: ID!): Cake!
   UserUpdate(updateUserInput: UpdateUserInput!): User!
   UserRemove(id: ID!): User!
@@ -67,7 +68,7 @@ type Mutation {
   AuthLogin(loginInput: LoginInput!): AuthResponse!
 
   """Seed the database"""
-  Zseed: Boolean!
+  Seed: Boolean!
 }
 
 input CreateCakeInput {
