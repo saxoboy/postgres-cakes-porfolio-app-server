@@ -47,6 +47,7 @@ type Query {
   CakeFindOne(id: ID!): Cake!
   UsersFindAll(roles: [ValidRoles!] = []): [User!]!
   UserFindOne(id: ID!): User!
+  AuthMe: User!
   AuthRevalite: AuthResponse!
 }
 

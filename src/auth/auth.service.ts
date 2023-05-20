@@ -55,6 +55,10 @@ export class AuthService {
     };
   }
 
+  async me(user: User): Promise<User> {
+    return user;
+  }
+
   async validateUser(id: string): Promise<User> {
     const user = await this.usersService.findOneById(id);
 

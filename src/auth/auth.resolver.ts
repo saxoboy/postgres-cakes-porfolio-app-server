@@ -35,6 +35,12 @@ export class AuthResolver {
     return await this.authService.logOut(user);
   }
 
+  @Query(() => User, { name: 'AuthMe' })
+  @UseGuards(JwtAuthGuard)
+  async me(@CurrentUser() user: User): Promise<User> {
+    return await this.authService.me(user);
+  }
+
   @Query(() => AuthResponse, { name: 'AuthRevalite' })
   @UseGuards(JwtAuthGuard)
   async revaliteToken(
