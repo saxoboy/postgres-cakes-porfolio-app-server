@@ -48,6 +48,17 @@ export class AuthService {
     };
   }
 
+  async logOut(user: User): Promise<AuthResponse> {
+    return {
+      user,
+      token: null,
+    };
+  }
+
+  async me(user: User): Promise<User> {
+    return user;
+  }
+
   async validateUser(id: string): Promise<User> {
     const user = await this.usersService.findOneById(id);
 

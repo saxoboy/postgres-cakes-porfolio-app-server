@@ -22,6 +22,20 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Category {
+  id: ID!
+  _createdAt: DateTime!
+  _updatedAt: DateTime!
+  _createdById: ID
+  _updatedById: ID
+  name: String!
+  slug: String
+  description: String
+  imageUrl: String
+  cakes: [Cake!]!
+  isActive: Boolean!
+}
+
 type Cake {
   id: ID!
   _createdAt: DateTime!
@@ -33,13 +47,14 @@ type Cake {
   description: String!
   imageUrl: String
   photos: [String!]
+  category: Category!
   isActive: Boolean!
   user: User!
 }
 
 type AuthResponse {
-  token: String!
-  user: User!
+  token: String
+  user: User
 }
 
 type Query {
@@ -47,7 +62,10 @@ type Query {
   CakeFindOne(id: ID!): Cake!
   UsersFindAll(roles: [ValidRoles!] = []): [User!]!
   UserFindOne(id: ID!): User!
+  AuthMe: User!
   AuthRevalite: AuthResponse!
+  categories: [Category!]!
+  category(id: Int!): Category!
 }
 
 """Valid Roles"""
@@ -66,9 +84,13 @@ type Mutation {
   UserRemove(id: ID!): User!
   AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
   AuthLogin(loginInput: LoginInput!): AuthResponse!
+  AuthLogout(id: ID!): AuthResponse!
 
   """Seed the database"""
   Seed: Boolean!
+  createCategory(createCategoryInput: CreateCategoryInput!): Category!
+  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
+  removeCategory(id: Int!): Category!
 }
 
 input CreateCakeInput {
@@ -109,4 +131,15 @@ input AuthRegisterInput {
 input LoginInput {
   email: String!
   password: String!
+}
+
+input CreateCategoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdateCategoryInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
 }
