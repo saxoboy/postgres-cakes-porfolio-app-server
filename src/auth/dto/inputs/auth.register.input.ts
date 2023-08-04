@@ -1,12 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
-import {
-  IsArray,
-  IsEmail,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
-import { ValidRoles } from 'src/auth/enums/valid-roles.enum';
+import { IsEmail, IsString, MinLength } from 'class-validator';
 
 @InputType()
 export class AuthRegisterInput {
@@ -27,8 +20,8 @@ export class AuthRegisterInput {
   @MinLength(6)
   password: string;
 
-  @Field(() => [ValidRoles], { nullable: true })
-  @IsArray()
-  @IsOptional()
-  roles?: ValidRoles[];
+  // @Field(() => [ValidRoles], { nullable: true })
+  // @IsArray()
+  // @IsOptional()
+  // roles: ValidRoles[];
 }

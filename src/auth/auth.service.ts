@@ -1,8 +1,9 @@
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginInput, AuthRegisterInput } from './dto/inputs';
-import { AuthResponse } from './dto/types/auth-response.type';
+import { AuthResponse } from './types/auth-response.type';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 
@@ -11,10 +12,15 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   private getJwtToken(userId: string) {
-    return this.jwtService.sign({ id: userId });
+    const payload = { id: userId };
+    const options = {
+      expiresIn: this.configService.get<string>('JWT_EXPIRATION_TIME'),
+    };
+    return this.jwtService.sign(payload, options);
   }
 
   async register(authRegisterInput: AuthRegisterInput): Promise<AuthResponse> {
@@ -40,7 +46,12 @@ export class AuthService {
       throw new UnauthorizedException('User is not active');
     }
 
+    const lastLogin = new Date();
+    await this.usersService.updateLastLogin(user.id, { lastLogin });
+
     const token = this.getJwtToken(user.id);
+
+    console.log(`User ${user.email} logged in at ${lastLogin}`);
 
     return {
       token,
@@ -55,24 +66,17 @@ export class AuthService {
     };
   }
 
-  async me(user: User): Promise<User> {
-    return user;
-  }
-
   async validateUser(id: string): Promise<User> {
     const user = await this.usersService.findOneById(id);
-
     if (!user.isActive) {
       throw new UnauthorizedException(`User is inactive, talk with an admin`);
     }
-
     delete user.password;
-
     return user;
   }
 
   async revaliteToken(user: User): Promise<AuthResponse> {
     const token = this.getJwtToken(user.id);
-    return { user, token };
+    return { token, user };
   }
 }

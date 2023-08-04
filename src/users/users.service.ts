@@ -74,10 +74,6 @@ export class UsersService {
     }
   }
 
-  // async findOne(id: number) {
-  //   return `This action returns a #${id} user`;
-  // }
-
   async update(
     id: string,
     updateUserInput: UpdateUserInput,
@@ -95,6 +91,23 @@ export class UsersService {
 
       userToUpdate._updatedAt = new Date();
       userToUpdate._updatedById = updateBy.id;
+
+      return await this.userRepository.save(userToUpdate);
+    } catch (error) {
+      this.handleErrosDb(error);
+    }
+  }
+
+  async updateLastLogin(id: string, lastLogin: { lastLogin: Date }) {
+    try {
+      const userToUpdate = await this.userRepository.preload({
+        ...lastLogin,
+        id,
+      });
+
+      if (!userToUpdate) {
+        throw new BadRequestException('User not found');
+      }
 
       return await this.userRepository.save(userToUpdate);
     } catch (error) {

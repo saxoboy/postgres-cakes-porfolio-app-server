@@ -32,6 +32,9 @@ export class User extends Base {
   @Field(() => Boolean)
   isActive: boolean;
 
+  @Column({ type: 'timestamp', nullable: true })
+  lastLogin?: Date;
+
   @OneToMany(() => Cake, (cake) => cake.user, { nullable: true, lazy: true })
   @Field(() => [Cake])
   cakes?: Cake[];
