@@ -1,8 +1,8 @@
-import { Mutation, Resolver, Args, Query, ID } from '@nestjs/graphql';
-import { AuthService } from './auth.service';
+import { Mutation, Resolver, Args, Query } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
 import { AuthRegisterInput, LoginInput } from './dto/inputs';
-import { AuthResponse } from './dto/types/auth-response.type';
-import { ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { AuthResponse } from './types/auth-response.type';
+import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt.auth.guards';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from 'src/users/entities/user.entity';
@@ -28,23 +28,15 @@ export class AuthResolver {
 
   @Mutation(() => AuthResponse, { name: 'AuthLogout' })
   @UseGuards(JwtAuthGuard)
-  async logout(
-    @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
-    user: User,
-  ): Promise<AuthResponse> {
+  async logout(@CurrentUser() user: User): Promise<AuthResponse> {
     return await this.authService.logOut(user);
-  }
-
-  @Query(() => User, { name: 'AuthMe' })
-  @UseGuards(JwtAuthGuard)
-  async me(@CurrentUser() user: User): Promise<User> {
-    return await this.authService.me(user);
   }
 
   @Query(() => AuthResponse, { name: 'AuthRevalite' })
   @UseGuards(JwtAuthGuard)
   async revaliteToken(
-    @CurrentUser([ValidRoles.root], [ValidRoles.admin]) user: User,
+    @CurrentUser([ValidRoles.root, ValidRoles.admin, ValidRoles.user])
+    user: User,
   ): Promise<AuthResponse> {
     return await this.authService.revaliteToken(user);
   }

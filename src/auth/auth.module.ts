@@ -8,11 +8,14 @@ import { AuthResolver } from './auth.resolver';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({
+  providers: [AuthResolver, AuthService, JwtStrategy],
+  exports: [JwtStrategy, PassportModule, JwtModule],
   imports: [
     ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
+      inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const secret: string = configService.get<string>('JWT_SECRET');
         const expiresIn: string = configService.get<string>(
@@ -23,11 +26,8 @@ import { UsersModule } from 'src/users/users.module';
           signOptions: { expiresIn },
         };
       },
-      inject: [ConfigService],
     }),
     UsersModule,
   ],
-  providers: [AuthResolver, AuthService, JwtStrategy],
-  exports: [JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}
