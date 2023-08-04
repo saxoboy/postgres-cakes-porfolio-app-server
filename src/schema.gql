@@ -62,7 +62,6 @@ type Query {
   CakeFindOne(id: ID!): Cake!
   UsersFindAll(roles: [ValidRoles!] = []): [User!]!
   UserFindOne(id: ID!): User!
-  AuthMe: User!
   AuthRevalite: AuthResponse!
   categories: [Category!]!
   category(id: Int!): Category!
@@ -84,7 +83,7 @@ type Mutation {
   UserRemove(id: ID!): User!
   AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
   AuthLogin(loginInput: LoginInput!): AuthResponse!
-  AuthLogout(id: ID!): AuthResponse!
+  AuthLogout: AuthResponse!
 
   """Seed the database"""
   Seed: Boolean!
@@ -115,8 +114,8 @@ input UpdateUserInput {
   lastname: String
   email: String
   password: String
-  roles: [ValidRoles!]
   id: ID!
+  roles: [ValidRoles!]
   isActive: Boolean
 }
 
@@ -125,7 +124,6 @@ input AuthRegisterInput {
   lastname: String!
   email: String!
   password: String!
-  roles: [ValidRoles!]
 }
 
 input LoginInput {
