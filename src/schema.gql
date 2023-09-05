@@ -58,11 +58,11 @@ type AuthResponse {
 }
 
 type Query {
-  CakesFindAll(offset: Int = 0, limit: Int = 10, search: String): [Cake!]!
-  CakeFindOne(id: ID!): Cake!
+  AuthRevalite: AuthResponse!
   UsersFindAll(roles: [ValidRoles!] = []): [User!]!
   UserFindOne(id: ID!): User!
-  AuthRevalite: AuthResponse!
+  CakesFindAll(offset: Int = 0, limit: Int = 10, search: String): [Cake!]!
+  CakeFindOne(id: ID!): Cake!
   categories: [Category!]!
   category(id: Int!): Category!
 }
@@ -75,21 +75,43 @@ enum ValidRoles {
 }
 
 type Mutation {
+  AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
+  AuthLogin(loginInput: LoginInput!): AuthResponse!
+  AuthLogout: AuthResponse!
+  UserUpdate(updateUserInput: UpdateUserInput!): User!
+  UserRemove(id: ID!): User!
   CakeCreate(createCakeInput: CreateCakeInput!): Cake!
   CakeUpdate(updateCakeInput: UpdateCakeInput!): Cake!
   CakeDeactivate(id: ID!): Cake!
   CakeRemove(id: ID!): Cake!
-  UserUpdate(updateUserInput: UpdateUserInput!): User!
-  UserRemove(id: ID!): User!
-  AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
-  AuthLogin(loginInput: LoginInput!): AuthResponse!
-  AuthLogout: AuthResponse!
 
   """Seed the database"""
   Seed: Boolean!
   createCategory(createCategoryInput: CreateCategoryInput!): Category!
   updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
   removeCategory(id: Int!): Category!
+}
+
+input AuthRegisterInput {
+  name: String!
+  lastname: String!
+  email: String!
+  password: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  name: String
+  lastname: String
+  email: String
+  password: String
+  id: ID!
+  roles: [ValidRoles!]
+  isActive: Boolean
 }
 
 input CreateCakeInput {
@@ -108,28 +130,6 @@ input UpdateCakeInput {
   photos: [String!]
   id: ID!
   isActive: Boolean!
-}
-
-input UpdateUserInput {
-  name: String
-  lastname: String
-  email: String
-  password: String
-  id: ID!
-  roles: [ValidRoles!]
-  isActive: Boolean
-}
-
-input AuthRegisterInput {
-  name: String!
-  lastname: String!
-  email: String!
-  password: String!
-}
-
-input LoginInput {
-  email: String!
-  password: String!
 }
 
 input CreateCategoryInput {
