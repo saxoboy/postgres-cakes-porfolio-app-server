@@ -107,6 +107,7 @@ input UpdateCakeInput {
   imageUrl: String
   photos: [String!]
   id: ID!
+  isActive: Boolean!
 }
 
 input UpdateUserInput {

@@ -1,4 +1,4 @@
-import { IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsString, IsUUID } from 'class-validator';
 import { CreateCakeInput } from './create-cake.input';
 import { InputType, Field, PartialType, ID } from '@nestjs/graphql';
 
@@ -8,4 +8,8 @@ export class UpdateCakeInput extends PartialType(CreateCakeInput) {
   @IsString()
   @IsUUID()
   id: string;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  isActive?: boolean;
 }

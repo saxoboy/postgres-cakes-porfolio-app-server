@@ -16,7 +16,7 @@ export class CakesService {
   async create(createCakeInput: CreateCakeInput, user: User): Promise<Cake> {
     const { name } = createCakeInput;
     const slug = name.toLowerCase().replace(/ /g, '-');
-    const cake = await this.cakeRepository.findOneBy({ slug });
+    const cake = await this.cakeRepository.findOne({ where: { slug } });
     if (cake) {
       throw new NotFoundException('Cake already exists');
     }
@@ -27,7 +27,7 @@ export class CakesService {
       _createdById: user.id,
       _updatedById: user.id,
     });
-    return await this.cakeRepository.save(newCake);
+    return this.cakeRepository.save(newCake);
   }
 
   async findAll(
@@ -40,28 +40,24 @@ export class CakesService {
 
     const query = this.cakeRepository
       .createQueryBuilder('cake')
+      .where('cake.userId = :userId', { userId: user.id })
+      .andWhere('cake.isActive = :isActive', { isActive: true })
       .take(limit)
-      .skip(offset)
-      .where('cake.userId = :userId', { userId: user.id });
+      .skip(offset);
 
-    if (search) {
+    if (search && search.length > 2) {
       query
-        .andWhere('unaccent(lower(cake.name)) ILIKE unaccent(lower(:search))', {
+        .andWhere('cake.name ILIKE :search', {
           search: `%${search}%`,
         })
-        .orWhere(
-          'unaccent(lower(cake.description)) ILIKE unaccent(lower(:search))',
-          { search: `%${search}%` },
-        );
+        .orWhere('cake.description ILIKE :search', { search: `%${search}%` });
     }
-
     return await query.getMany();
   }
 
   async findOne(id: string, user: User): Promise<Cake> {
-    const cake = await this.cakeRepository.findOneBy({
-      id,
-      user: { id: user.id },
+    const cake = await this.cakeRepository.findOne({
+      where: { id, user: { id: user.id } },
     });
 
     if (!cake) {
@@ -85,18 +81,36 @@ export class CakesService {
   }
 
   async deactivate(id: string, user: User): Promise<Cake> {
-    const cake = await this.findOne(id, user);
-    cake.isActive = false;
-    cake._updatedById = user.id;
-    cake._updatedAt = new Date();
+    const cake = await this.cakeRepository.preload({
+      id,
+      isActive: false,
+      _updatedById: user.id,
+      _updatedAt: new Date(),
+    });
+
+    if (!cake) {
+      throw new NotFoundException('Cake not found');
+    }
     return await this.cakeRepository.save(cake);
   }
 
   async remove(id: string, user: User): Promise<Cake> {
     const cake = await this.findOne(id, user);
+    console.log(cake);
     await this.cakeRepository.remove(cake);
     return { ...cake, id };
   }
+  // async remove(id: string, user: User): Promise<Cake> {
+  //   const cake = await this.cakeRepository.preload({
+  //     id,
+  //     _updatedById: user.id,
+  //     isActive: false,
+  //   });
+  //   if (!cake) {
+  //     throw new NotFoundException('Cake not found');
+  //   }
+  //   return await this.cakeRepository.save(cake);
+  // }
 
   async countByUser(user: User): Promise<number> {
     return await this.cakeRepository.count({
