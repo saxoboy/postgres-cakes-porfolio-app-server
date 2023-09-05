@@ -28,7 +28,7 @@ export class SeedService {
     private readonly cakesService: CakesService,
     private readonly categoriesService: CategoriesService,
   ) {
-    this.isProduction = this.configService.get('NODE_ENV') === 'production';
+    this.isProduction = this.configService.get('STATE') === 'production';
   }
 
   async seed() {
