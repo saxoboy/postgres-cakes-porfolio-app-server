@@ -1,8 +1,8 @@
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Column, Entity, OneToMany } from 'typeorm';
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { IsOptional, IsUrl } from 'class-validator';
 import { Base } from 'src/base/base.entity';
 import { Cake } from 'src/cakes/entities/cake.entity';
-import { IsOptional, IsUrl } from 'class-validator';
 
 @Entity({ name: 'categoryCakes' })
 @ObjectType()
@@ -25,14 +25,14 @@ export class Category extends Base {
   @IsUrl()
   imageUrl?: string;
 
-  @Field(() => [Cake])
+  @Field(() => Boolean)
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
   @OneToMany(() => Cake, (cake) => cake.category, {
     nullable: true,
     lazy: true,
   })
+  @Field(() => [Cake])
   cakes?: Cake[];
-
-  @Field(() => Boolean)
-  @Column({ type: 'boolean', default: true })
-  isActive: boolean;
 }

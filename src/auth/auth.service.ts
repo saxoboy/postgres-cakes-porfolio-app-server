@@ -51,8 +51,6 @@ export class AuthService {
 
     const token = this.getJwtToken(user.id);
 
-    console.log(`User ${user.email} logged in at ${lastLogin}`);
-
     return {
       token,
       user,

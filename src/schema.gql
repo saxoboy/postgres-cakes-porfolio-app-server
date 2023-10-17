@@ -2,54 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type User {
-  id: ID!
-  _createdAt: DateTime!
-  _updatedAt: DateTime!
-  _createdById: ID
-  _updatedById: ID
-  name: String!
-  lastname: String!
+input AuthRegisterInput {
   email: String!
-  roles: [String!]!
-  isActive: Boolean!
-  cakes(offset: Int = 0, limit: Int = 10, search: String): [Cake!]!
-  cakeCount: Int!
-}
-
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
-type Category {
-  id: ID!
-  _createdAt: DateTime!
-  _updatedAt: DateTime!
-  _createdById: ID
-  _updatedById: ID
+  lastname: String!
   name: String!
-  slug: String
-  description: String
-  imageUrl: String
-  cakes: [Cake!]!
-  isActive: Boolean!
-}
-
-type Cake {
-  id: ID!
-  _createdAt: DateTime!
-  _updatedAt: DateTime!
-  _createdById: ID
-  _updatedById: ID
-  name: String!
-  slug: String
-  description: String!
-  imageUrl: String
-  photos: [String!]
-  category: Category!
-  isActive: Boolean!
-  user: User!
+  password: String!
 }
 
 type AuthResponse {
@@ -57,88 +14,128 @@ type AuthResponse {
   user: User
 }
 
-type Query {
-  AuthRevalite: AuthResponse!
-  UsersFindAll(roles: [ValidRoles!] = []): [User!]!
-  UserFindOne(id: ID!): User!
-  CakesFindAll(offset: Int = 0, limit: Int = 10, search: String): [Cake!]!
-  CakeFindOne(id: ID!): Cake!
-  categories: [Category!]!
-  category(id: Int!): Category!
-}
-
-"""Valid Roles"""
-enum ValidRoles {
-  root
-  admin
-  user
-}
-
-type Mutation {
-  AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
-  AuthLogin(loginInput: LoginInput!): AuthResponse!
-  AuthLogout: AuthResponse!
-  UserUpdate(updateUserInput: UpdateUserInput!): User!
-  UserRemove(id: ID!): User!
-  CakeCreate(createCakeInput: CreateCakeInput!): Cake!
-  CakeUpdate(updateCakeInput: UpdateCakeInput!): Cake!
-  CakeDeactivate(id: ID!): Cake!
-  CakeRemove(id: ID!): Cake!
-
-  """Seed the database"""
-  Seed: Boolean!
-  createCategory(createCategoryInput: CreateCategoryInput!): Category!
-  updateCategory(updateCategoryInput: UpdateCategoryInput!): Category!
-  removeCategory(id: Int!): Category!
-}
-
-input AuthRegisterInput {
+type Cake {
+  _createdAt: DateTime!
+  _createdById: ID
+  _updatedAt: DateTime!
+  _updatedById: ID
+  category: Category!
+  description: String!
+  id: ID!
+  imageUrl: String
+  isActive: Boolean!
   name: String!
-  lastname: String!
-  email: String!
-  password: String!
+  photos: [String!]
+  slug: String
+  user: User!
 }
+
+type Category {
+  _createdAt: DateTime!
+  _createdById: ID
+  _updatedAt: DateTime!
+  _updatedById: ID
+  cakes: [Cake!]!
+  description: String
+  id: ID!
+  imageUrl: String
+  isActive: Boolean!
+  name: String!
+  slug: String
+}
+
+input CreateCakeInput {
+  categoryId: String
+  description: String!
+  imageUrl: String
+  name: String!
+  photos: [String!]
+  slug: String
+}
+
+input CreateCategoryInput {
+  description: String
+  imageUrl: String
+  isActive: Boolean
+  name: String!
+  slug: String
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
 
 input LoginInput {
   email: String!
   password: String!
 }
 
-input UpdateUserInput {
-  name: String
-  lastname: String
-  email: String
-  password: String
-  id: ID!
-  roles: [ValidRoles!]
-  isActive: Boolean
+type Mutation {
+  AuthLogin(loginInput: LoginInput!): AuthResponse!
+  AuthLogout: AuthResponse!
+  AuthRegister(authRegisterInput: AuthRegisterInput!): AuthResponse!
+  CakeCreate(createCakeInput: CreateCakeInput!): Cake!
+  CakeDeactivate(id: ID!): Cake!
+  CakeRemove(id: ID!): Cake!
+  CakeUpdate(updateCakeInput: UpdateCakeInput!): Cake!
+  CategoryCreate(createCategoryInput: CreateCategoryInput!): Category!
+
+  """Seed the database"""
+  Seed: Boolean!
+  UserRemove(id: ID!): User!
+  UserUpdate(updateUserInput: UpdateUserInput!): User!
 }
 
-input CreateCakeInput {
-  name: String!
-  slug: String
-  description: String!
-  imageUrl: String
-  photos: [String!]
+type Query {
+  AuthRevalite: AuthResponse!
+  CakeFindOne(id: ID!): Cake!
+  CakesFindAll(limit: Int = 10, offset: Int = 0, search: String): [Cake!]!
+  CakesFindAllPublic(limit: Int = 10, offset: Int = 0, search: String): [Cake!]!
+  CategoriesFindAll(limit: Int = 10, offset: Int = 0, search: String): [Category!]!
+  UserFindOne(id: ID!): User!
+  UsersFindAll(roles: [ValidRoles!] = []): [User!]!
 }
 
 input UpdateCakeInput {
-  name: String
-  slug: String
+  categoryId: String
   description: String
+  id: ID!
   imageUrl: String
+  isActive: Boolean!
+  name: String
   photos: [String!]
+  slug: String
+}
+
+input UpdateUserInput {
+  email: String
+  id: ID!
+  isActive: Boolean
+  lastname: String
+  name: String
+  password: String
+  roles: [ValidRoles!]
+}
+
+type User {
+  _createdAt: DateTime!
+  _createdById: ID
+  _updatedAt: DateTime!
+  _updatedById: ID
+  cakeCount: Int!
+  cakes(limit: Int = 10, offset: Int = 0, search: String): [Cake!]!
+  email: String!
   id: ID!
   isActive: Boolean!
+  lastname: String!
+  name: String!
+  roles: [String!]!
 }
 
-input CreateCategoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
-}
-
-input UpdateCategoryInput {
-  """Example field (placeholder)"""
-  exampleField: Int
-  id: Int!
+"""Valid Roles"""
+enum ValidRoles {
+  admin
+  root
+  user
 }

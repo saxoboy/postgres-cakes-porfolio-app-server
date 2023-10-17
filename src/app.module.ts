@@ -2,8 +2,8 @@ import { join } from 'path';
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ConfigModule } from '@nestjs/config';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ApolloDriver } from '@nestjs/apollo';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { AppController } from './app.controller';
@@ -17,33 +17,41 @@ import { CategoriesModule } from './categories/categories.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    GraphQLModule.forRootAsync<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      imports: [AuthModule],
-      inject: [JwtService],
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      useFactory: async (jwtService: JwtService) => ({
-        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-        playground: false,
-        plugins: [ApolloServerPluginLandingPageLocalDefault()],
-        context: ({ req, connection }) =>
-          connection ? { req: connection.context } : { req },
-        // context({ req }) {
-        //   const token = req.headers.authorization?.replace('Bearer ', '');
-        //   if (!token) throw Error('Token needed');
-        //   const payload = jwtService.decode(token);
-        //   if (!payload) throw Error('Token not valid');
-        // },
-      }),
+    ConfigModule.forRoot({
+      isGlobal: true,
     }),
-
-    // GraphQLModule.forRoot<ApolloDriverConfig>({
-    //   driver: ApolloDriver,
-    //   playground: false,
-    //   autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-    //   plugins: [ApolloServerPluginLandingPageLocalDefault()],
-    // }),
+    GraphQLModule.forRootAsync({
+      driver: ApolloDriver,
+      imports: [ConfigModule, AppModule],
+      inject: [ConfigService],
+      useFactory: async (
+        configService: ConfigService,
+        jwtService: JwtService,
+      ) => {
+        return {
+          autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+          playground: configService.get<string>('STATE') === 'production',
+          sortSchema: true,
+          plugins: [ApolloServerPluginLandingPageLocalDefault()],
+          onConnect: async (connectionParams: { authorization: string }) => {
+            console.log('Connection attempt with params:', connectionParams);
+            if (connectionParams.authorization) {
+              const token = connectionParams.authorization.split(' ')[1];
+              const user = await jwtService.verifyAsync(token);
+              console.log(user);
+              return { user };
+            }
+            throw new Error('Missing auth token!');
+          },
+          context: ({ req, res, connection }) => {
+            if (connection) {
+              return { req, res, user: connection.context.user }; // Injecting pubSub into context
+            }
+            return { req, res };
+          },
+        };
+      },
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
@@ -61,9 +69,9 @@ import { CategoriesModule } from './categories/categories.module';
             }
           : (false as any),
     }),
-    CakesModule,
     UsersModule,
     AuthModule,
+    CakesModule,
     SeedModule,
     CommonModule,
     CategoriesModule,
@@ -71,15 +79,4 @@ import { CategoriesModule } from './categories/categories.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {
-  //Todo: Borrar
-  constructor() {
-    console.log('Variables de entorno');
-    console.log('STATE', process.env.STATE);
-    console.log('host', process.env.DB_HOST);
-    console.log('port', +process.env.DB_PORT);
-    console.log('username', process.env.DB_POSTGRES_USER);
-    console.log('password', process.env.DB_POSTGRES_PASSWORD);
-    console.log('database', process.env.DB_POSTGRES_DB);
-  }
-}
+export class AppModule {}

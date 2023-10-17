@@ -1,5 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql';
 import { IsOptional, IsString, IsUrl } from 'class-validator';
+import { Category } from 'src/categories/entities/category.entity';
 
 @InputType()
 export class CreateCakeInput {
@@ -24,4 +25,9 @@ export class CreateCakeInput {
   @Field(() => [String], { nullable: true })
   @IsOptional()
   photos?: string[];
+
+  @Field(() => Category, { nullable: true })
+  @IsString()
+  @IsOptional()
+  category?: Category;
 }
